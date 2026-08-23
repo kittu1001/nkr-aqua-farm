@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  LineChart, Line, Legend
+  LineChart, Line
 } from "recharts";
 import {
   Droplets, Fish, Wheat, Wallet, TrendingUp, Plus, ChevronLeft,
-  AlertTriangle, CheckCircle2, X, Waves, Sprout, History, LayoutGrid
+  AlertTriangle, Waves, Sprout, History, LayoutGrid
 } from "lucide-react";
 
 /* ---------------------------------------------------------------
@@ -46,18 +46,18 @@ const fmtDate = (d) => new Date(d).toLocaleDateString("en-IN", { day: "2-digit",
 const inr = (n) => "₹" + Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 0 });
 
 /* ---------------------------------------------------------------
-   Storage helpers (browser localStorage — persists on this device)
+   Storage helpers
 ------------------------------------------------------------------*/
 async function loadTank(tankId) {
   try {
-    const raw = localStorage.getItem(`tank:${tankId}`);
-    if (raw) return { ...EMPTY_TANK, ...JSON.parse(raw) };
+    const res = await window.storage.get(`tank:${tankId}`);
+    if (res && res.value) return { ...EMPTY_TANK, ...JSON.parse(res.value) };
   } catch (e) { /* not found yet */ }
   return { ...EMPTY_TANK };
 }
 async function saveTank(tankId, data) {
   try {
-    localStorage.setItem(`tank:${tankId}`, JSON.stringify(data));
+    await window.storage.set(`tank:${tankId}`, JSON.stringify(data));
   } catch (e) {
     console.error("save failed", e);
   }
